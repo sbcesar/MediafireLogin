@@ -1,11 +1,10 @@
-package com.example.mediafirelogin.ui.login
+package com.example.mediafirelogin.ui.login.viewmodel
 
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.delay
-import org.intellij.lang.annotations.Pattern
 
 class LoginViewModel : ViewModel() {
 

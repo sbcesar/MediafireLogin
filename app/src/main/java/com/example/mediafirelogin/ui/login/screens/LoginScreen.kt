@@ -1,4 +1,4 @@
-package com.example.mediafirelogin.ui.login
+package com.example.mediafirelogin.ui.login.screens
 
 import android.content.Intent
 import android.net.Uri
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
@@ -34,10 +33,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mediafirelogin.R
+import com.example.mediafirelogin.ui.login.viewmodel.LoginViewModel
 import com.example.mediafirelogin.ui.theme.BrilliantGray
 import com.example.mediafirelogin.ui.theme.SkyBlue
 import com.example.mediafirelogin.ui.theme.SoftBlue
@@ -102,7 +101,7 @@ fun LoginForm(loginViewModel: LoginViewModel) {
                 )
                 RememberAndForgot(isChecked = isChecked, onCheckedChange = {loginViewModel.toggleKeepMeLoggedIn()})
                 Spacer(modifier = Modifier.padding(13.dp))
-                LoginButton(text = "LOG IN", onClick = {}, containerColor = SkyBlue, isEnabled = isLoginEnabled)
+                LoginButton(text = "LOG IN", onClick = { /* PASA A LA SIGUIENTE PAGINA */ }, containerColor = SkyBlue, isEnabled = isLoginEnabled)
                 Spacer(modifier = Modifier.padding(10.dp))
                 LoginDivider()
                 Spacer(modifier = Modifier.padding(10.dp))
