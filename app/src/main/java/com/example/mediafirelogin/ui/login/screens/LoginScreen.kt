@@ -35,7 +35,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.mediafirelogin.R
+import com.example.mediafirelogin.navigation.AppScreen
 import com.example.mediafirelogin.ui.login.viewmodel.LoginViewModel
 import com.example.mediafirelogin.ui.theme.BrilliantGray
 import com.example.mediafirelogin.ui.theme.SkyBlue
@@ -43,12 +45,12 @@ import com.example.mediafirelogin.ui.theme.SoftBlue
 import com.example.mediafirelogin.ui.theme.StrongBlue
 
 @Composable
-fun MainContent(loginViewModel: LoginViewModel) {
-    LoginForm(loginViewModel)
+fun LoginContent(loginViewModel: LoginViewModel, navController: NavController) {
+    LoginScreen(loginViewModel, navController)
 }
 
 @Composable
-fun LoginForm(loginViewModel: LoginViewModel) {
+fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
 
     val context = LocalContext.current
 
@@ -69,52 +71,45 @@ fun LoginForm(loginViewModel: LoginViewModel) {
     // "X" Sign In
     val twitterIntent = Intent(Intent.ACTION_VIEW, Uri.parse(LoginViewModel.TWITTER_LOGOUT_URL))
 
-    if (isLoading) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator(Modifier.align(Alignment.Center))
-        }
-    } else {
-        Surface(
-            color = Color.White
+    Surface(
+        color = Color.White
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 30.dp)
         ) {
-            Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 30.dp)
-            ) {
-                MediafireLogo()
-                Spacer(modifier = Modifier.height(70.dp))
-                EmailField(
-                    value = emailText,
-                    onChange = { loginViewModel.updateEmail(it) },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.padding(4.dp))
-                PasswordField(
-                    value = passwordText,
-                    onChange = { loginViewModel.updatePassword(it) },
-                    modifier = Modifier.fillMaxWidth(),
-                    isPasswordVisible = isPasswordVisible,
-                    onClick = { loginViewModel.togglePasswordVisibility() }
-                )
-                RememberAndForgot(isChecked = isChecked, onCheckedChange = {loginViewModel.toggleKeepMeLoggedIn()})
-                Spacer(modifier = Modifier.padding(13.dp))
-                LoginButton(text = "LOG IN", onClick = { /* PASA A LA SIGUIENTE PAGINA */ }, containerColor = SkyBlue, isEnabled = isLoginEnabled)
-                Spacer(modifier = Modifier.padding(10.dp))
-                LoginDivider()
-                Spacer(modifier = Modifier.padding(10.dp))
-                LoginButtonWithImage(text = "LOG IN WITH GOOGLE", onClick = { context.startActivity(logoutIntent) }, containerColor = StrongBlue, icon = painterResource(R.drawable.google_icon))
-                Spacer(modifier = Modifier.padding(10.dp))
-                LoginButtonWithImage(text = "LOG IN WITH X", onClick = {context.startActivity(twitterIntent)}, containerColor = StrongBlue, icon = painterResource(R.drawable.x_icon))
-                Spacer(modifier = Modifier.padding(32.dp))
-                CreateAccount(onLinkClick = {context.startActivity(registerIntent)})
-            }
+            MediafireLogo()
+            Spacer(modifier = Modifier.height(70.dp))
+            EmailField(
+                value = emailText,
+                onChange = { loginViewModel.updateEmail(it) },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.padding(4.dp))
+            PasswordField(
+                value = passwordText,
+                onChange = { loginViewModel.updatePassword(it) },
+                modifier = Modifier.fillMaxWidth(),
+                isPasswordVisible = isPasswordVisible,
+                onClick = { loginViewModel.togglePasswordVisibility() }
+            )
+            RememberAndForgot(isChecked = isChecked, onCheckedChange = {loginViewModel.toggleKeepMeLoggedIn()})
+            Spacer(modifier = Modifier.padding(13.dp))
+            LoginButton(text = "LOG IN", onClick = { navController.navigate(route = AppScreen.SecondScreen.route + "/" + emailText + " " + passwordText) }, containerColor = SkyBlue, isEnabled = isLoginEnabled)
+            Spacer(modifier = Modifier.padding(10.dp))
+            LoginDivider()
+            Spacer(modifier = Modifier.padding(10.dp))
+            LoginButtonWithImage(text = "LOG IN WITH GOOGLE", onClick = { context.startActivity(logoutIntent) }, containerColor = StrongBlue, icon = painterResource(R.drawable.google_icon))
+            Spacer(modifier = Modifier.padding(10.dp))
+            LoginButtonWithImage(text = "LOG IN WITH X", onClick = {context.startActivity(twitterIntent)}, containerColor = StrongBlue, icon = painterResource(R.drawable.x_icon))
+            Spacer(modifier = Modifier.padding(32.dp))
+            CreateAccount(onLinkClick = {context.startActivity(registerIntent)})
         }
+
     }
-
-
 }
 
 @Composable
