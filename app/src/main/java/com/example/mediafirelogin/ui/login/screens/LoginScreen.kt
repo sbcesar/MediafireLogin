@@ -44,33 +44,42 @@ import com.example.mediafirelogin.ui.theme.SkyBlue
 import com.example.mediafirelogin.ui.theme.SoftBlue
 import com.example.mediafirelogin.ui.theme.StrongBlue
 
+/**
+ * Pantalla principal de inicio de sesión que contiene los campos de entrada, botones
+ * y opciones de inicio de sesión.
+ *
+ * @param loginViewModel [LoginViewModel] que gestiona el estado y la lógica de la pantalla.
+ * @param navController [NavController] para gestionar la navegación entre pantallas.
+ */
 @Composable
 fun LoginContent(loginViewModel: LoginViewModel, navController: NavController) {
     LoginScreen(loginViewModel, navController)
 }
-
+/**
+ * Composable principal para el diseño de la pantalla de inicio de sesión.
+ *
+ * @param loginViewModel [LoginViewModel] para observar y manejar el estado de la pantalla.
+ * @param navController [NavController] para la navegación.
+ */
 @Composable
 fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
 
     val context = LocalContext.current
 
+    // Estados del viewmodel
     val emailText by loginViewModel.email.observeAsState("")
     val passwordText by loginViewModel.password.observeAsState("")
     val isChecked by loginViewModel.isChecked.observeAsState(false)
     val isPasswordVisible by loginViewModel.isPasswordVisible.observeAsState(false)
     val isLoginEnabled by loginViewModel.loginEnabled.observeAsState(false)
-
     val isLoading by loginViewModel.isLoading.observeAsState(false)
 
-    // Google Log Out
+    // Intents para manejar enlaces externos
     val logoutIntent = Intent(Intent.ACTION_VIEW, Uri.parse(LoginViewModel.GOOGLE_LOGOUT_URL))
-
-    // Google Register
     val registerIntent = Intent(Intent.ACTION_VIEW, Uri.parse(LoginViewModel.GOOGLE_REGISTER_URL))
-
-    // "X" Sign In
     val twitterIntent = Intent(Intent.ACTION_VIEW, Uri.parse(LoginViewModel.TWITTER_LOGOUT_URL))
 
+    // Contenedor principal de la pantalla
     Surface(
         color = Color.White
     ) {
@@ -98,20 +107,66 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
             )
             RememberAndForgot(isChecked = isChecked, onCheckedChange = {loginViewModel.toggleKeepMeLoggedIn()})
             Spacer(modifier = Modifier.padding(13.dp))
-            LoginButton(text = "LOG IN", onClick = { navController.navigate(route = AppScreen.SecondScreen.route + "/" + emailText + " " + passwordText) }, containerColor = SkyBlue, isEnabled = isLoginEnabled)
+            LoginButton(
+                text = "LOG IN",
+                onClick = {
+                    loginViewModel.delayed {
+                        navController.navigate(
+                            route = AppScreen.SecondScreen.route + "/" + emailText + " " + passwordText
+                        )
+                    }
+                },
+                containerColor = SkyBlue,
+                isEnabled = isLoginEnabled
+            )
             Spacer(modifier = Modifier.padding(10.dp))
             LoginDivider()
             Spacer(modifier = Modifier.padding(10.dp))
-            LoginButtonWithImage(text = "LOG IN WITH GOOGLE", onClick = { context.startActivity(logoutIntent) }, containerColor = StrongBlue, icon = painterResource(R.drawable.google_icon))
+            LoginButtonWithImage(
+                text = "LOG IN WITH GOOGLE",
+                onClick = {
+                    loginViewModel.delayed {
+                        context.startActivity(logoutIntent)
+                    }
+                },
+                containerColor = StrongBlue,
+                icon = painterResource(R.drawable.google_icon))
             Spacer(modifier = Modifier.padding(10.dp))
-            LoginButtonWithImage(text = "LOG IN WITH X", onClick = {context.startActivity(twitterIntent)}, containerColor = StrongBlue, icon = painterResource(R.drawable.x_icon))
+            LoginButtonWithImage(
+                text = "LOG IN WITH X",
+                onClick = {
+                    loginViewModel.delayed {
+                        context.startActivity(twitterIntent)
+                    }
+                },
+                containerColor = StrongBlue,
+                icon = painterResource(R.drawable.x_icon))
             Spacer(modifier = Modifier.padding(32.dp))
-            CreateAccount(onLinkClick = {context.startActivity(registerIntent)})
+            CreateAccount(
+                onLinkClick = {
+                    loginViewModel.delayed {
+                        context.startActivity(registerIntent)
+                    }
+                }
+            )
         }
 
     }
+
+    // Indicador de carga
+    if (isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
+    }
 }
 
+/**
+ * Muestra el logotipo de Mediafire en la parte superior de la pantalla.
+ */
 @Composable
 fun MediafireLogo() {
     Image(
@@ -121,14 +176,17 @@ fun MediafireLogo() {
     )
 }
 
+/**
+ * Campo de entrada de texto para el correo electrónico.
+ *
+ * @param value El texto actual en el campo.
+ * @param onChange Acción a ejecutar al cambiar el texto.
+ * @param modifier Modificadores aplicados al campo.
+ * @param placeholder Texto de marcador de posición.
+ */
 @OptIn(ExperimentalMaterial3Api::class) // Para poder usar textFieldColors
 @Composable
-fun EmailField(
-    value: String,
-    onChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    placeholder: String = "Email Address"
-) {
+fun EmailField(value: String, onChange: (String) -> Unit, modifier: Modifier = Modifier, placeholder: String = "Email Address") {
 
     TextField(
         value = value,
@@ -156,16 +214,19 @@ fun EmailField(
 
 }
 
+/**
+ * Campo de entrada de texto para la contraseña con opción de visibilidad.
+ *
+ * @param value El texto actual en el campo.
+ * @param onChange Acción a ejecutar al cambiar el texto.
+ * @param modifier Modificadores aplicados al campo.
+ * @param placeholder Texto de marcador de posición.
+ * @param onClick Acción a ejecutar al cambiar la visibilidad de la contraseña.
+ * @param isPasswordVisible Estado que indica si la contraseña es visible.
+ */
 @OptIn(ExperimentalMaterial3Api::class) // Para poder usar textFieldColors
 @Composable
-fun PasswordField(
-    value: String,
-    onChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    placeholder: String = "Password",
-    onClick: () -> Unit,
-    isPasswordVisible: Boolean
-) {
+fun PasswordField(value: String, onChange: (String) -> Unit, modifier: Modifier = Modifier, placeholder: String = "Password", onClick: () -> Unit, isPasswordVisible: Boolean) {
     TextField(
         value = value,
         onValueChange = onChange,
@@ -204,6 +265,12 @@ fun PasswordField(
     )
 }
 
+/**
+ * Fila que contiene la opción de mantener sesión iniciada y un enlace a "Olvidó su contraseña".
+ *
+ * @param isChecked Estado de la casilla de "Mantener sesión iniciada".
+ * @param onCheckedChange Acción a ejecutar al cambiar el estado de la casilla.
+ */
 @Composable
 fun RememberAndForgot(isChecked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Row(
@@ -218,6 +285,12 @@ fun RememberAndForgot(isChecked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     }
 }
 
+/**
+ * Componente para la casilla de verificación "Mantener sesión iniciada".
+ *
+ * @param isChecked Estado de la casilla.
+ * @param onCheckedChange Acción a ejecutar al cambiar el estado.
+ */
 @Composable
 fun KeepMeLoggedIn(isChecked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     Row(
@@ -245,6 +318,9 @@ fun KeepMeLoggedIn(isChecked: Boolean, onCheckedChange: (Boolean) -> Unit) {
     }
 }
 
+/**
+ * Texto que representa un enlace a "¿Olvidaste tu contraseña?".
+ */
 @Composable
 fun ForgotPassword() {
     Text(
@@ -255,14 +331,17 @@ fun ForgotPassword() {
     )
 }
 
+/**
+ * Botón reutilizable para acciones de inicio de sesión.
+ *
+ * @param text Texto a mostrar en el botón.
+ * @param onClick Acción a ejecutar al presionar el botón.
+ * @param contentColor Color del texto del botón.
+ * @param containerColor Color de fondo del botón.
+ * @param isEnabled Estado habilitado/deshabilitado del botón.
+ */
 @Composable
-fun LoginButton(
-    text: String,
-    onClick: () -> Unit,
-    contentColor: Color = Color.White,
-    containerColor: Color,
-    isEnabled: Boolean
-) {
+fun LoginButton(text: String, onClick: () -> Unit, contentColor: Color = Color.White, containerColor: Color, isEnabled: Boolean) {
     Button(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().height(50.dp),
@@ -277,13 +356,16 @@ fun LoginButton(
     }
 }
 
+/**
+ * Botón con imagen reutilizable para acciones de inicio de sesión con terceros.
+ *
+ * @param text Texto a mostrar en el botón.
+ * @param onClick Acción a ejecutar al presionar el botón.
+ * @param containerColor Color de fondo del botón.
+ * @param icon Imagen a mostrar junto al texto.
+ */
 @Composable
-fun LoginButtonWithImage(
-    text: String,
-    onClick: () -> Unit,
-    containerColor: Color,
-    icon: Painter
-) {
+fun LoginButtonWithImage(text: String, onClick: () -> Unit, containerColor: Color, icon: Painter) {
     Button(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().height(50.dp),
@@ -313,8 +395,9 @@ fun LoginButtonWithImage(
     }
 }
 
-
-
+/**
+ * Separador horizontal con texto "OR" para dividir las opciones de inicio de sesión.
+ */
 @Composable
 fun LoginDivider() {
 
@@ -344,10 +427,13 @@ fun LoginDivider() {
     }
 }
 
+/**
+ * Enlace que permite crear una cuenta nueva.
+ *
+ * @param onLinkClick Acción a ejecutar al presionar el enlace.
+ */
 @Composable
-fun CreateAccount(
-    onLinkClick: () -> Unit
-) {
+fun CreateAccount(onLinkClick: () -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
