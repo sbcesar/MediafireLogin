@@ -1,13 +1,16 @@
 package com.example.mediafirelogin.ui.login.screens
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +21,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.selection.TextSelectionColors
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
@@ -51,9 +56,65 @@ import com.example.mediafirelogin.ui.theme.StrongBlue
  * @param loginViewModel [LoginViewModel] que gestiona el estado y la lógica de la pantalla.
  * @param navController [NavController] para gestionar la navegación entre pantallas.
  */
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginContent(loginViewModel: LoginViewModel, navController: NavController) {
-    LoginScreen(loginViewModel, navController)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = SkyBlue
+                ),
+                navigationIcon = {
+                    IconButton(onClick = { /* DESPLIEGA UNA VENTANA DE MENU */ }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.menu_icon),
+                            contentDescription = "Menu Icon",
+                            tint = Color.White,
+                            modifier = Modifier.size(30.dp)
+                        )
+                    }
+                },
+                title = {
+
+                }
+            )
+        },
+        bottomBar = {
+            BottomAppBar(
+                containerColor = BrilliantGray,
+                contentColor = Color.Gray,
+                modifier = Modifier.height(70.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "©2024 MediaFire", fontSize = 11.sp)
+                        Spacer(modifier = Modifier.padding(5.dp))
+                        Text(text = "Build 121931", fontSize = 11.sp)
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(text = "Need help?", fontSize = 11.sp)
+                        Spacer(modifier = Modifier.padding(2.dp))
+                        Text(text = "Submit a ticket", color = SkyBlue, fontSize = 11.sp, modifier = Modifier.clickable { /* TE ENVIA A UNA PAGINA PARA AYUDA */ })
+                    }
+                }
+            }
+        },
+        contentWindowInsets = WindowInsets(0.dp)
+    ) {
+        LoginScreen(loginViewModel, navController)
+    }
 }
 /**
  * Composable principal para el diseño de la pantalla de inicio de sesión.
@@ -91,7 +152,7 @@ fun LoginScreen(loginViewModel: LoginViewModel, navController: NavController) {
                 .padding(horizontal = 30.dp)
         ) {
             MediafireLogo()
-            Spacer(modifier = Modifier.height(70.dp))
+            Spacer(modifier = Modifier.height(30.dp))
             EmailField(
                 value = emailText,
                 onChange = { loginViewModel.updateEmail(it) },
@@ -327,7 +388,8 @@ fun ForgotPassword() {
         text = "Forgot Password?",
         color = SkyBlue,
         fontSize = 12.sp,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.clickable { /* ENVIA A UNA PAGINA DE RECUPERAR CONTRASEÑA */ }
     )
 }
 

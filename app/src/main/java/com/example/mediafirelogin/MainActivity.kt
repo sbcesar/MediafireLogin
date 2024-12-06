@@ -5,8 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.view.WindowCompat
 import com.example.mediafirelogin.navigation.AppNavigation
-import com.example.mediafirelogin.ui.login.viewmodel.LoginViewModel
-import com.example.mediafirelogin.ui.login.screens.LoginContent
 import com.example.mediafirelogin.ui.theme.MediafireLoginTheme
 
 class MainActivity : ComponentActivity() {
@@ -18,7 +16,6 @@ class MainActivity : ComponentActivity() {
             MediafireLoginTheme(darkTheme = false) {
                 AppNavigation()
             }
-
         }
     }
 }
